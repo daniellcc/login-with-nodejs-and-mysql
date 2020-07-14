@@ -8,7 +8,7 @@ async function registerCtrl(req, res) {
   await bcrypt.hash(req.body.password, 10)
     .then(hashedPassword => {
       connection.query(
-        'INSERT INTO usuarios VALUES (?, ?, ?)',
+        'INSERT INTO usuarios VALUES (?, ?, ?, default)',
         [name, email, hashedPassword]
       );
     })

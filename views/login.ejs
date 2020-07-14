@@ -1,4 +1,7 @@
-login
+<h1>login</h1>
+<% if(messages.error) { %>
+  <%= messages.error %>  
+<% } %>
 <form action="/login" method="POST">
   <input type="email" name="email" placeholder="email">
   <input type="password" name="password" placeholder="password">
