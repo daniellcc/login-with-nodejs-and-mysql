@@ -1,11 +1,26 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
+const connection = require('../DB');
 const router = express.Router();
-const registerCtrl = require('../controllers/registerCtrl');
 
 router.get('/', (req, res) => {
-  res.render('../views/register.ejs');
+  res.render('register');
 });
 
-router.post('/', registerCtrl);
+router.post('/', async (req, res) =>  {
+  if(req.body.name && req.body.email && req.body.password) {
+    const [name, email] = [req.body.name, req.body.email];
+
+    await bcrypt.hash(req.body.password, 10)
+      .then(hashedPassword => {
+        connection.query(
+          'INSERT INTO usuarios VALUES (?, ?, ?, default)',
+          [name, email, hashedPassword]
+        );
+      })
+      .then(() => res.redirect('/login'))
+      .catch(error => console.error('an error ocurred on hashed password: ', error));
+  }
+});
 
 module.exports = router;

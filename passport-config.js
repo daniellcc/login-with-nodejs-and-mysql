@@ -1,22 +1,38 @@
 const bcrypt = require('bcrypt');
+const connection = require('./DB');
+const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 
-function initializePassport(passport, userByEmail, userById) {
-
-  async function authenticateUser(email, password, done) {
-    const user = userByEmail(email);
-    if(!user)
-      return done(null, false, { message: 'no user' });
-  
-    if(await bcrypt.compare(password, user.password))
-      return done(null, user);
-    else
-      return done(null, false, { message: 'wrong password' });
-  }
-
-  passport.use(new localStrategy({ usernameField: 'email' }, authenticateUser));
-  passport.serializeUser((user, done) => done(null, user.id));
-  passport.deserializeUser((id, done) => done(null, userById(id)));
+function serialization() {
+  passport.serializeUser(
+    (user, done) => done(null, user.id)
+  );
+  passport.deserializeUser((id, done) => {
+    connection.query(
+      'SELECT * FROM usuarios WHERE ID=?',
+      id,
+      (error, user) => done(null, user));
+  });
 }
 
-module.exports = initializePassport;
+function strategy() {
+  passport.use(new localStrategy(
+    { usernameField: 'email' },
+    (email, password, done) => {
+      connection.query(
+        'SELECT * FROM usuarios WHERE email=?', email,
+        async (error, user) => {
+          !user
+            ? done(null, false)
+            : await bcrypt.compare(password, user.pass, (error, result) => {
+                !result ? done(null, false) : done(null, user)
+              });
+        }
+      );
+    }
+  ));
+
+  serialization();
+}
+
+module.exports = strategy;
