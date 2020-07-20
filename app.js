@@ -6,18 +6,11 @@ const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 
+const auth = require('./auth');
 const strategy = require('./passport-config');
-const app = express();
 
+const app = express();
 const port = process.env.PORT || 3000;
-const checkAuth = (req, res, next) => {
-  try {
-    req.isAuthenticated() ? next() : res.redirect('/');
-  } catch(error) {
-    console.log(error)
-  }
-  
-}
 
 strategy();
 
@@ -32,10 +25,10 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/', checkAuth, (req, res) => res.render('index'));
+app.get('/', auth.checkAuth, (req, res) => res.render('index'));
 
-app.use('/register', require('./routes/register'));
-app.use('/login', require('./routes/login'));
-app.use('/dashboard', checkAuth, require('./routes/dashboard'));
+app.use('/register', auth.checkAuth, require('./routes/register'));
+app.use('/login', auth.checkAuth, require('./routes/login'));
+app.use('/dashboard', auth.checkUnauth, require('./routes/dashboard'));
 
 app.listen(port, () => console.log('running'));
