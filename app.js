@@ -8,11 +8,12 @@ const flash = require('express-flash');
 const session = require('express-session');
 
 const strategy = require('./passport-config');
-const auth = require('./auth');
-const checkAuth = require('./auth');
-
 const app = express();
+
 const port = process.env.PORT || 3000;
+const checkAuth = (req, res, next) => {
+  req.isAuthenticated() ? next() : res.redirect('/');
+}
 
 strategy();
 
@@ -34,6 +35,5 @@ app.get('/', (req, res) => res.render('index'));
 app.use('/register', require('./routes/register'));
 app.use('/login', require('./routes/login'));
 app.use('/dashboard', checkAuth, require('./routes/dashboard'));
-app.use('/logout', require('./routes/logout'));
 
 app.listen(port, () => console.log('running'));
