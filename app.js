@@ -9,6 +9,7 @@ const session = require('express-session');
 
 const strategy = require('./passport-config');
 const auth = require('./auth');
+const checkAuth = require('./auth');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -29,8 +30,10 @@ app.use(passport.session());
 
 app.get('/', (req, res) => res.render('index'));
 
-app.use('/register',auth.checkNotAuthenticated ,require('./routes/register'));
-app.use('/login',auth.checkNotAuthenticated, require('./routes/login'));
-app.use('/dashboard',auth.checkAuthenticated, require('./routes/dashboard'));
+
+app.use('/register', require('./routes/register'));
+app.use('/login', require('./routes/login'));
+app.use('/dashboard', checkAuth, require('./routes/dashboard'));
+app.use('/logout', require('./routes/logout'));
 
 app.listen(port, () => console.log('running'));

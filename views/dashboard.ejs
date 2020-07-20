@@ -1,2 +1,9 @@
 <h1>dashboard</h1>
-<p>hello <%= user %></p>
+<% if(user) { %>
+  <p>hello <%= user %></p>
+<% } %>
+
+<form action="/logout">
+  <input type="submit" value="salir" method="GET">
+</form>
+
