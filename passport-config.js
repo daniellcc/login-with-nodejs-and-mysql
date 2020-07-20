@@ -30,15 +30,22 @@ function strategy() {
         async (error, queryResult) => {
           const user = queryResult[0];
 
-          error ? done(error) : false;
+          if(error) {
+            done(error, false, { message: 'ha ocurrido un error' }) 
+          }
 
-          !user
-            ? done(null, false)
-            : await bcrypt.compare(password, user.pass, (error, result) => {
-                error ? done(error) : false;
+          if(!user) {
+            done(null, false, { message: 'no se ha encontrando un usuario con ese email' })
+          }
+          else {
+            await bcrypt.compare(password, user.pass, (error, result) => {
+              if(error) done(error, false, { message: 'ha ocurrido un error' });
 
-                !result ? done(null, false) : done(null, user);
+              !result
+                ? done(null, false, { message: 'la contraseña es incorrecta' })
+                : done(null, user);
             });
+          }
         }
       );
     }

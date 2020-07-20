@@ -5,6 +5,7 @@ if(process.env.NODE_ENV !== 'production') {
 const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
+const flash = require('express-flash');
 
 const auth = require('./auth');
 const strategy = require('./passport-config');
@@ -24,6 +25,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
 
 app.get('/', auth.checkAuth, (req, res) => res.render('index'));
 

@@ -5,4 +5,8 @@
   <button type="submit">login</button>
 </form>
 
+<% if(messages.error) {%>
+  <p><%= messages.error %></p>
+<% } %>
+
 <a href="/register">register</a>
