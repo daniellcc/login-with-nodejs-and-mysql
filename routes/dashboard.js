@@ -8,10 +8,8 @@ router.get('/', (req, res) => {
 
 router.get('/logout', (req, res) => {
   req.logOut();
-  req.session.destroy(error => {
-    error ? console.error('error on log out: ', error) 
-          : res.redirect('/login');   
-  });
+  res.clearCookie('connect.sid');
+  res.redirect('/login');
 });
 
 module.exports = router;
