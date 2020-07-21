@@ -21,6 +21,10 @@ router.post('/', async (req, res) =>  {
       .then(() => res.redirect('/login'))
       .catch(error => console.error('an error ocurred on hashed password: ', error));
   }
+  else {
+    req.flash('info', 'todos los campos son necesarios');
+    res.redirect('/register');
+  }
 });
 
 module.exports = router;

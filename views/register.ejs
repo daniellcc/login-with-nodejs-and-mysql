@@ -6,5 +6,9 @@
   <button type="submit">register</button>
 </form>
 
+<% if(messages) {%>
+  <p><%= messages.info %></p>
+<% } %>
+
 
 <a href="/login">login</a>
